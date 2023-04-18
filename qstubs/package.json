@@ -25,11 +25,11 @@
       },
       {
         "command": "hmi.stub1",
-        "title": "Copy to stub1"
+        "title": "stub1"
       },
       {
         "command": "hmi.stub2",
-        "title": "Copy to stub2"
+        "title": "stub2"
       },
       {
         "command": "hmi.stub_comp",
@@ -37,7 +37,17 @@
       }
     ],
     "menus": {
-      "editor/context": [
+      "editor/context": [ 
+        {
+          "submenu": "hmi.stage",
+          "group": "hmi"
+        },
+        {
+          "command": "hmi.stub_comp",
+          "group": "hmi@3"
+        }
+      ],
+      "hmi.stage": [
         {
           "command": "hmi.stub1",
           "group": "hmi"
@@ -45,13 +55,15 @@
         {
           "command": "hmi.stub2",
           "group": "hmi"
-        },
-        {
-          "command": "hmi.stub_comp",
-          "group": "hmi@2"
         }
       ]
-    }
+    },
+    "submenus": [
+      {
+        "id": "hmi.stage",
+        "label": "Copy to stub"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
