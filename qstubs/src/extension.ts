@@ -26,8 +26,8 @@ function sendSelectedToFile(filePath: string) {
 		const selectedText = document.getText(range);
 
 		// let filePath = '/tmp/stub1.cpp';
-		let text = fileName + '\n' 
-			+ 'Ln ' + startLine + ' - ' + endLine + '\n'
+		let text = '// -- ' + fileName + '\n' 
+			+ '// -- Ln ' + startLine + ' - ' + endLine + '\n\n'
 			+ selectedText + '\n';
 
 		// -- copied to clipboard
@@ -75,20 +75,11 @@ function selectAllandPaste(uri: string, text: string) {
 function openAndSelectAll(uri: string, text: string) {
 	// -- if it does not exist, create it first
 	const filePath = vscode.Uri.file(uri);
-	/* vscode.workspace.fs.stat(filePath).then(() => {
-		selectAllandPaste(uri, text);
-	  }).catch(() => {
-		vscode.window.showErrorMessage(
-			`File ${uri} does not exist, creating`);
-		fs.writeFile(uri, '', () => {
-			selectAllandPaste(uri, text);
-		});
-	  });	*/
 	if (fs.existsSync(uri)) {
 		// File exists in path
 		selectAllandPaste(uri, text);
 	} else{
-		vscode.window.showErrorMessage(
+		vscode.window.showInformationMessage(
 			`File ${uri} does not exist, creating`);
 		fs.writeFile(uri, '', () => {
 			selectAllandPaste(uri, text);
@@ -172,3 +163,4 @@ export function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
+ 
