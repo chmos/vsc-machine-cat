@@ -96,8 +96,8 @@ class Vcx:
         
                 
     # add a file under which filter
-    def add_file(self, path, filter = None):
-        r = os.path.relpath(path, self.dst)
+    def add_file(self, path, filter = None, relative = True):
+        r = os.path.relpath(path, self.dst) if relative else path
         r = Vcx.unixPath(r)
         if Vcx.fileType(path) <= 0:
             # not c related
@@ -117,7 +117,7 @@ class Vcx:
             lst1.append(a)
         if len(lst2) == 0:
             b = ET.SubElement(self.fil_root, Vcx.ns + Vcx.CL_GRPUP)
-            lst1.append(b)
+            lst2.append(b)
         
         # -- whether it is already in lst1
         for i in lst1:
@@ -139,7 +139,7 @@ class Vcx:
             
     # add a folder under which filter. The folder name
     # becomes the sub-filter
-    def add_folder(self, path, filter = BASE):
+    def add_folder(self, path, filter = BASE, relative = True):
         fd = os.path.basename(path);
         sub_filter = filter + "\\" + fd;
         lstf = Vcx.itemGroup(self.fil_root, Vcx.CL_FILTER);
@@ -165,11 +165,11 @@ class Vcx:
         for i in os.listdir(path):
             j = os.path.join(path, i);
             if os.path.isfile(j):
-                self.add_file(j, filter = sub_filter)
+                self.add_file(j, filter = sub_filter, relative = relative)
                 continue
             if os.path.isdir(j):
                 if Vcx.containsCPP(j):
-                    self.add_folder(j, filter = sub_filter)
+                    self.add_folder(j, filter = sub_filter, relative = relative)
         
         
     def flush(self):
