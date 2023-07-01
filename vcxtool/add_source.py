@@ -94,7 +94,13 @@ class Vcx:
                     return True;
         return False;
         
-                
+    # sort an itemGroup by "Include"
+    @staticmethod
+    def sort_group(root, tag):
+        lst = Vcx.itemGroup(root, tag)
+        for c in lst:
+            c[:] = sorted(c, key=lambda child: (child.tag, child.get('Include')))
+        
     # add a file under which filter
     def add_file(self, path, filter = None, relative = True):
         r = os.path.relpath(path, self.dst) if relative else path
@@ -173,6 +179,11 @@ class Vcx:
         
         
     def flush(self):
+        Vcx.sort_group(self.vcx_root, Vcx.CL_COM)
+        Vcx.sort_group(self.vcx_root, Vcx.CL_INC)
+        Vcx.sort_group(self.fil_root, Vcx.CL_COM)
+        Vcx.sort_group(self.fil_root, Vcx.CL_INC)
+        
         Vcx.indent(self.vcx_root)
         Vcx.indent(self.fil_root)
         self.vcx_tree.write(self.vcx, encoding='utf-8');
