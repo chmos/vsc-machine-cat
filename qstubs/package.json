@@ -2,7 +2,7 @@
   "name": "refaq",
   "displayName": "refaq",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "chmos",
   "engines": {
     "vscode": "^1.51.0"
@@ -14,7 +14,8 @@
     "onCommand:hmi.welcome",
     "onCommand:hmi.stub1",
     "onCommand:hmi.stub2",
-    "onCommand:hmi.stub_comp"
+    "onCommand:hmi.stub_comp",
+    "onCommand:hmi.declare"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -34,6 +35,14 @@
       {
         "command": "hmi.stub_comp",
         "title": "Compare stubs"
+      },
+      {
+        "command": "hmi.declare",
+        "title": "Block to function"
+      },
+      {
+        "command": "hmi.jump",
+        "title": "jump to file/loc"
       }
     ],
     "menus": {
@@ -45,6 +54,14 @@
         {
           "command": "hmi.stub_comp",
           "group": "hmi@3"
+        },
+        {
+          "command": "hmi.declare",
+          "group": "hmi@4"
+        },
+        {
+          "command": "hmi.jump",
+          "group": "hmi@5"
         }
       ],
       "hmi.stage": [
@@ -62,6 +79,12 @@
       {
         "id": "hmi.stage",
         "label": "Copy to stub"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "hmi.jump",
+        "key": "ctrl+shift+o"
       }
     ]
   },
