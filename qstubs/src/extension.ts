@@ -3,6 +3,10 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as handle_c from './handle_c';
+import { Console } from 'console';
+import { getProfileArguments } from '@vscode/test-electron/out/runTest';
+
 // import * as dmp from 'diff-match-patch';
 
 // generate a file with the selected 
@@ -28,7 +32,7 @@ function sendSelectedToFile(filePath: string) {
 		// let filePath = '/tmp/stub1.cpp';
 		let text = '// -- ' + fileName + '\n' 
 			+ '// -- Ln ' + startLine + ' - ' + endLine + '\n\n'
-			+ selectedText + '\n';
+			+ selectedText + '\n'; 
 
 		// -- copied to clipboard
 		vscode.env.clipboard.writeText(text);
@@ -37,6 +41,47 @@ function sendSelectedToFile(filePath: string) {
 		openAndSelectAll(filePath, text);		
 	}
 }
+
+// find all lines starting with "#include" and
+// insert them into the beginning of the selected file
+function insertIncludes(filePath: string) {
+	// Get the active text editor
+	const editor = vscode.window.activeTextEditor;
+
+	if (editor) {
+		// Get the document and iterate over its lines
+		const document = editor.document;
+		const includeLines: vscode.Range[] = [];
+		var hd: string = "";
+
+		for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
+			const line = document.lineAt(lineIndex);
+			if (line.text.startsWith('#include')) {
+				// Add the range of the line to the array
+				includeLines.push(line.range);
+				hd += line.text + "\n";
+			}
+		}
+		hd += "\n";
+
+		const fileName = document.fileName;
+		const selection = editor.selection;
+		const startLine = selection.start.line + 1;
+		const endLine = selection.end.line + 1;
+		const start = document.lineAt(startLine - 1).range.start;
+		const end = document.lineAt(endLine - 1).range.end;
+		const range = new vscode.Range(start, end);
+		const selectedText = document.getText(range);
+		let text = '// -- ' + fileName + '\n'
+			+ '// -- Ln ' + startLine + ' - ' + endLine + '\n\n'
+			+ "void foo() {\n"
+			+ selectedText + '\n'
+			+ "}\n";
+
+		write2file(filePath, hd + text);
+	}
+}
+
 
 function write2file(filePath: string, text: string) {
 	fs.writeFile(filePath, text, (err) => {
@@ -141,14 +186,34 @@ export function activate(context: vscode.ExtensionContext) {
 				uri1, uri2);
 		});
 	
+	let disposable5 = vscode.commands.registerCommand('hmi.declare',
+		() => {
+			// handle_c.showDeclare();
+			let tcpp = "/tmp/foo.cpp";
+			insertIncludes(tcpp);
+			let uri = vscode.Uri.file(tcpp);
+			// vscode.workspace.openTextDocument(uri);
+			vscode.commands.executeCommand("vscode.open", uri);
+		});
+
+	let disposable6 = vscode.commands.registerCommand('hmi.jump',
+		() => {
+			// handle_c.showDeclare();
+			handle_c.getFile();
+			
+		});
+
 	context.subscriptions.push(disposable1, disposable2,
-		disposable3, disposable4);
+		disposable3, disposable4, 
+		disposable6);
 
 	let menuDisposable = vscode.commands.registerCommand(
 		'editor.action.showContextMenu', () => {
 			vscode.commands.executeCommand('hmi.stub1');
 			vscode.commands.executeCommand('hmi.stub2');
 			vscode.commands.executeCommand('hmi.stub_comp');
+			vscode.commands.executeCommand('hmi.declare');
+			vscode.commands.executeCommand('hmi.jump');
 	});
 	
 	context.subscriptions.push(menuDisposable);
