@@ -1,4 +1,4 @@
 # UI
 ## Some popular UI engines
-- [sciter] (https://sciter.com/)
-  and [quark] (https://quark.sciter.com/)
+- [sciter](https://sciter.com/)
+  and [quark](https://quark.sciter.com/)
